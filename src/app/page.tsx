@@ -13,7 +13,7 @@ export default function Home() {
   ]
   return (
     <div className="h-full">
-      <ChatSection conversation={conversation}/>
+      <ChatSection conversation={conversation} loading={false}/>
     </div>
   );
 }

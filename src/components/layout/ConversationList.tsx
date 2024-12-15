@@ -49,7 +49,7 @@ const ConversationList = () => {
         </div>
       </Link>
       {loading && (
-        <div className="h-full -mt-10 flex items-center justify-center">
+        <div className="h-full md:-mt-10 flex items-center justify-center">
           <Spinner />
         </div>
       )}

@@ -7,19 +7,26 @@ import React from "react";
 
 // import { TextField, InputAdornment, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import Spinner from "../layout/Spinner";
 
 interface ChatSectionProps {
   conversation: Message[];
+  loading: boolean;
 }
 
-const ChatSection = ({ conversation }: ChatSectionProps) => {
+const ChatSection = ({ conversation, loading }: ChatSectionProps) => {
   return (
     <div className="h-full relative">
       <div className="flex flex-col justify-end h-full">
-        <div className="flex-auto flex flex-col gap-2 px-4 md:px-10">
+        {loading && (
+          <div className="h-full md:mt-40">
+            <Spinner />
+          </div>
+        )}
+        {!loading && <div className="md:max-h-[63vh] md:mb-4 flex-auto flex flex-col gap-2 px-4 md:px-10 pb-20 overflow-y-hidden">
           <p className="w-full text-center text-sm">Jan 27, 12:53 PM</p>
 
-          <div className="mt-4 flex flex-col gap-4 w-full">
+          <div className="mt-4 flex flex-col gap-4 w-full overflow-y-auto">
             {conversation.map((message: Message) => (
               <div
                 key={message.id}
@@ -42,9 +49,10 @@ const ChatSection = ({ conversation }: ChatSectionProps) => {
               </div>
             ))}
           </div>
-        </div>
+
+        </div>}
       </div>
-      <div className="fixed bottom-2 md:absolute md:bottom-5 left-0 w-full">
+      <div className="fixed z-10 bg-surface md:bg-white bottom-0 pb-2 md:absolute md:bottom-5 left-0 w-full">
         <div className="w-full px-2 py-2">
           <div className="flex items-center w-full rounded-full bg-surfaceContainerHigh px-4 py-3 shadow-sm">
             <input
