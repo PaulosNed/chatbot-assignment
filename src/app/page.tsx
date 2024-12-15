@@ -1,8 +1,19 @@
+import ChatSection from "@/components/conversation/ChatSection";
+import { Message } from "@/types/Message";
 
 export default function Home() {
+  const conversation: Message[] =[
+    {
+      id: "1",
+      text: "How can I help you today?",
+      isUser: false,
+      createdAt: "",
+      updatedAt: ""
+    }
+  ]
   return (
-    <div className="w-56 h-40 bg-blue-900 shadow-lg rounded-xl">
-      <p className="text-white text-3xl">Asdklasndkbasd</p>
+    <div className="h-full">
+      <ChatSection conversation={conversation}/>
     </div>
   );
 }
