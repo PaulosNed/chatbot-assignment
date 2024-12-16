@@ -1,79 +1,76 @@
 "use client";
 
 import ChatSection from "@/components/conversation/ChatSection";
+import { setConversation } from "@/store/chat/chatSlice";
+import { GetConversationResponseBody } from "@/types/Conversation";
 // import Spinner from "@/components/layout/Spinner";
-import { Message } from "@/types/Message";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
-export type GetConversationResponseBody = {
-  id: string;
-  title: string;
-  startTime: Date;
-  conversation: Message[];
-}
+import { useDispatch, useSelector } from "react-redux";
 
 const SelectedConversationPage = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  const [conversation, setConversation] = useState<GetConversationResponseBody>({
-    id: "",
-    title: "",
-    startTime: new Date(),
-    conversation: [],
-  });
+
+  const { isFirstText } = useSelector(
+    (state: {
+      chat: {
+        isFirstText: boolean;
+        conversationResponseBody: GetConversationResponseBody;
+      };
+    }) => state.chat
+  );
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchConversation = async () => {
-      // fetch conversations here
-      setTimeout(() => {
-        // Simulate fetching conversation
-        console.log("Fetched conversation", id);
-        setConversation({
-          id: id as string,
-          title: `Conversation ${id}`,
-          startTime: new Date(),
-          conversation: [
-          {
-            id: "1",
-            text: "How can I help you today?",
-            isUser: false,
-            createdAt: "",
-            updatedAt: "",
-          },
-          {
-            id: "2",
-            text: "I am a user and I am typing a response",
-            isUser: true,
-            createdAt: "",
-            updatedAt: "",
-          },
-          {
-            id: "3",
-            text: "This is an AI generated response",
-            isUser: false,
-            createdAt: "",
-            updatedAt: "",
-          },
-        ]});
+      if (!isFirstText) {
+        setTimeout(() => {
+          // Simulate fetching conversation
+          console.log("Fetched conversation", id);
+          dispatch(
+            setConversation({
+              id: id as string,
+              title: `Conversation ${id}`,
+              startTime: new Date().toISOString(),
+              conversation: [
+                {
+                  id: "1",
+                  text: "How can I help you today?",
+                  isUser: false,
+                  createdAt: "",
+                  updatedAt: "",
+                },
+                {
+                  id: "2",
+                  text: "I am a user and I am typing a response",
+                  isUser: true,
+                  createdAt: "",
+                  updatedAt: "",
+                },
+                {
+                  id: "3",
+                  text: "This is an AI generated response",
+                  isUser: false,
+                  createdAt: "",
+                  updatedAt: "",
+                },
+              ],
+            })
+          );
+          setLoading(false);
+        }, 2000);
+      } else {
         setLoading(false);
-      }, 2000);
+      }
     };
 
     fetchConversation();
-  }, [id]);
-
-  // if (loading) {
-  //   return (
-  //     <div className="w-full h-full -mt-10 flex items-center justify-center">
-  //       <Spinner />;
-  //     </div>
-  //   );
-  // }
+  }, []);
 
   return (
     <div className="h-full">
-      <ChatSection setConversation={setConversation} conversation={conversation.conversation} loading={loading} startTime={conversation.startTime}/>
+      <ChatSection loading={loading} />
     </div>
   );
 };

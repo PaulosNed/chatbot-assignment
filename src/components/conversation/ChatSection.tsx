@@ -3,32 +3,37 @@
 import ChatbotIcon from "@/icons/ChatbotIcon";
 import UserIcon from "@/icons/UserIcon";
 import { Message } from "@/types/Message";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // import { TextField, InputAdornment, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import Spinner from "../layout/Spinner";
-import { GetConversationResponseBody } from "@/app/[id]/page";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addMessage,
+  ConversationState,
+  replaceMessage,
+  setIsFirstFalse,
+  setIsFirstTrue,
+} from "@/store/chat/chatSlice";
 
 interface ChatSectionProps {
-  conversation: Message[];
-  setConversation: React.Dispatch<
-    React.SetStateAction<GetConversationResponseBody>
-  >;
   loading: boolean;
-  startTime: Date;
 }
 
-const ChatSection = ({
-  conversation,
-  setConversation,
-  loading,
-  startTime,
-}: ChatSectionProps) => {
+const ChatSection = ({ loading }: ChatSectionProps) => {
+  const isFirstText = useSelector(
+    (state: { chat: ConversationState }) => state.chat.isFirstText
+  );
+  const { startTime, conversation } = useSelector(
+    (state: { chat: ConversationState }) => state.chat.conversationResponseBody
+  );
+
   const [question, setQuestion] = useState<string>("");
   const router = useRouter();
-  const chatTime = startTime.toLocaleString("en-US", {
+
+  const chatTime = new Date(startTime).toLocaleString("en-US", {
     month: "short",
     day: "numeric",
     hour: "numeric",
@@ -36,64 +41,63 @@ const ChatSection = ({
     hour12: true,
   });
 
-  const handleClick = async () => {
-    console.log("Question: ", question);
+  const dispatch = useDispatch();
 
-    handleQuestion(conversation.length === 1);
+  const handleClick = () => {
+    if (!question) return;
 
-    // handle post to backend
+    dispatch(
+      addMessage({
+        id: conversation.length.toString(),
+        text: question,
+        isUser: true,
+        createdAt: startTime,
+        updatedAt: startTime,
+      })
+    );
+    if (conversation.length === 2) {
+      dispatch(setIsFirstTrue());
+
+      // Make request to backend to create a conversation then push to the id
+      router.replace(`/${2}`);
+    } else {
+      getResponse();
+    }
+
+    setQuestion("");
   };
 
-  const handleQuestion = async (isFirst: boolean) => {
-    setConversation((prev) => ({
-      ...prev,
-      conversation: [
-        ...prev.conversation,
-        {
-          id: conversation.length.toString(),
-          text: question,
-          isUser: true,
-          createdAt: startTime.toISOString(),
-          updatedAt: startTime.toISOString(),
-        },
-      ],
-    }));
-    setQuestion("");
-
+  const getResponse = () => {
     // show animation for two seconds
-    setConversation((prev) => ({
-      ...prev,
-      conversation: [
-        ...prev.conversation,
-        {
-          id: conversation.length.toString(),
-          text: "Typing...",
-          isUser: false,
-          createdAt: startTime.toISOString(),
-          updatedAt: startTime.toISOString(),
-        },
-      ],
-    }));
+    dispatch(
+      addMessage({
+        id: conversation.length.toString(),
+        text: "Typing...",
+        isUser: false,
+        createdAt: startTime,
+        updatedAt: startTime,
+      })
+    );
 
     setTimeout(() => {
-      setConversation((prev) => ({
-        ...prev,
-        conversation: [
-          ...prev.conversation.slice(0, -1),
-          {
-            id: (conversation.length + 1).toString(),
-            text: "This is a response from the chatbot.",
-            isUser: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-        ],
-      }));
-      if (isFirst) {
-        router.replace("/1");
-      }
+      dispatch(
+        replaceMessage({
+          id: (conversation.length + 1).toString(),
+          text: "This is a response from the chatbot.",
+          isUser: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        })
+      );
     }, 2000);
   };
+
+  useEffect(() => {
+    if (isFirstText) {
+      getResponse();
+      dispatch(setIsFirstFalse());
+    }
+  }, [isFirstText]);
 
   return (
     <div className="h-full relative">
@@ -133,7 +137,7 @@ const ChatSection = ({
           </div>
         )}
       </div>
-      <div className="fixed z-10 bg-surface md:bg-white md:rounded-b-3xl bottom-0 md:absolute md:bottom-5 left-0 w-full">
+      <div className="fixed z-10 bg-surface md:bg-white md:rounded-b-3xl bottom-3 md:absolute md:bottom-5 left-0 w-full">
         <div className="w-full px-4">
           <div className="flex items-center w-full rounded-full bg-surfaceContainerHigh px-4 py-3 shadow-sm">
             <input

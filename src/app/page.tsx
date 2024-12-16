@@ -1,26 +1,20 @@
-"use client"
+"use client";
 
 import ChatSection from "@/components/conversation/ChatSection";
-import { GetConversationResponseBody } from "./[id]/page";
-import { useState } from "react";
+import { resetChat } from "@/store/chat/chatSlice";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 export default function Home() {
-  const [conversation, setConversation] = useState<GetConversationResponseBody>({
-    id: "1",
-    title: "Start New Chat",
-    startTime: new Date(),
-    conversation: [
-    {
-      id: "1",
-      text: "How can I help you today?",
-      isUser: false,
-      createdAt: "",
-      updatedAt: ""
-    }
-  ]})
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(resetChat());
+  }, []);
+
   return (
     <div className="h-full">
-      <ChatSection setConversation={setConversation} conversation={conversation.conversation} loading={false} startTime={new Date()}/>
+      <ChatSection loading={false} />
     </div>
   );
 }
