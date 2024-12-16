@@ -16,6 +16,7 @@ export default {
         primaryContainer: "var(--primary-container)",
         secondaryContainer: "var(--secondary-container)",
         onPrimaryContainer: "var(--on-primary-container)",
+        onSecondaryContainer: "var(--on-secondary-container)",
         surfaceContainerHigh: "var(--surface-container-high)",
         surfaceContainerLow: "var(--surface-container-low)",
         onSurfaceVariant: "var(--on-surface-variant)",

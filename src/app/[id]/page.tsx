@@ -3,19 +3,37 @@
 import ChatSection from "@/components/conversation/ChatSection";
 // import Spinner from "@/components/layout/Spinner";
 import { Message } from "@/types/Message";
+import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
+type GetConversationResponseBody = {
+  id: string;
+  title: string;
+  startTime: Date;
+  conversation: Message[];
+}
+
 const SelectedConversationPage = () => {
+  const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  const [conversation, setConversation] = useState<Message[]>([]);
+  const [conversation, setConversation] = useState<GetConversationResponseBody>({
+    id: "",
+    title: "",
+    startTime: new Date(),
+    conversation: [],
+  });
 
   useEffect(() => {
     const fetchConversation = async () => {
       // fetch conversations here
       setTimeout(() => {
         // Simulate fetching conversation
-        console.log("Fetched conversation");
-        setConversation([
+        console.log("Fetched conversation", id);
+        setConversation({
+          id: id as string,
+          title: `Conversation ${id}`,
+          startTime: new Date(),
+          conversation: [
           {
             id: "1",
             text: "How can I help you today?",
@@ -86,13 +104,13 @@ const SelectedConversationPage = () => {
             createdAt: "",
             updatedAt: "",
           },
-        ]);
+        ]});
         setLoading(false);
       }, 2000);
     };
 
     fetchConversation();
-  }, []);
+  }, [id]);
 
   // if (loading) {
   //   return (
@@ -104,7 +122,7 @@ const SelectedConversationPage = () => {
 
   return (
     <div className="h-full">
-      <ChatSection conversation={conversation} loading={loading}/>
+      <ChatSection conversation={conversation.conversation} loading={loading} startTime={conversation.startTime}/>
     </div>
   );
 };
