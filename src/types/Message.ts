@@ -4,4 +4,5 @@ export type Message = {
     isUser: boolean,
     createdAt: string,
     updatedAt: string,
+    isTyping?: boolean
 }

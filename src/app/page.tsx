@@ -1,8 +1,15 @@
+"use client"
+
 import ChatSection from "@/components/conversation/ChatSection";
-import { Message } from "@/types/Message";
+import { GetConversationResponseBody } from "./[id]/page";
+import { useState } from "react";
 
 export default function Home() {
-  const conversation: Message[] =[
+  const [conversation, setConversation] = useState<GetConversationResponseBody>({
+    id: "1",
+    title: "Start New Chat",
+    startTime: new Date(),
+    conversation: [
     {
       id: "1",
       text: "How can I help you today?",
@@ -10,10 +17,10 @@ export default function Home() {
       createdAt: "",
       updatedAt: ""
     }
-  ]
+  ]})
   return (
     <div className="h-full">
-      <ChatSection conversation={conversation} loading={false} startTime={new Date()}/>
+      <ChatSection setConversation={setConversation} conversation={conversation.conversation} loading={false} startTime={new Date()}/>
     </div>
   );
 }

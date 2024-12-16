@@ -26,7 +26,6 @@ const modalBackdropStyle = {
   backdropFilter: "blur(10px)",
 };
 
-
 const ConversationItem = ({ id, title }: Conversation) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -35,7 +34,7 @@ const ConversationItem = ({ id, title }: Conversation) => {
   const handleDelete = () => {
     // Delete conversation
     handleClose();
-  }
+  };
 
   return (
     <>
@@ -60,12 +59,27 @@ const ConversationItem = ({ id, title }: Conversation) => {
       >
         <Box sx={style}>
           <div className="flex flex-col gap-8">
-            <Typography id="modal-modal-description" sx={{ mt: 2 }} className="text-lg font-[500] text-center">
+            <Typography
+              id="modal-modal-description"
+              sx={{ mt: 2 }}
+              className="text-lg font-[500] text-center"
+            >
               {`Are you sure you want to delete ${title}?`}
             </Typography>
             <div className="flex gap-4 justify-between">
-                <Button onClick={handleClose} className="w-full rounded-full py-2" style={{ backgroundColor: 'rgba(232, 222, 248, 1)' }}>Cancel</Button>
-              <Button onClick={handleDelete} className="w-full rounded-full py-2 bg-red-700 text-white">Delete</Button>
+              <Button
+                onClick={handleClose}
+                className="w-full rounded-full py-2"
+                style={{ backgroundColor: "rgba(232, 222, 248, 1)" }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDelete}
+                className="w-full rounded-full py-2 bg-red-700 text-white"
+              >
+                Delete
+              </Button>
             </div>
           </div>
         </Box>
