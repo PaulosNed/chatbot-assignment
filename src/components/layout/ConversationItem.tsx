@@ -50,7 +50,13 @@ const ConversationItem = ({ id, title }: Conversation) => {
         <div className="w-full bg-primaryContainer py-4 text-lg rounded-2xl">
           <div className="flex items-center justify-between px-4 pr-6">
             <p className="text-sm md:text-base font-[400]">{title}</p>
-            <button onClick={handleOpen}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                handleOpen();
+              }}
+            >
               <TrashIcon />
             </button>
           </div>

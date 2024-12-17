@@ -1,25 +1,26 @@
 "use client";
 
 import ChatSection from "@/components/conversation/ChatSection";
-import { setConversation, setConversationId, setIsFirstTrue } from "@/store/chat/chatSlice";
+import { setConversationId, setIsFirstTrue } from "@/store/chat/chatSlice";
+import { fetchConversation } from "@/store/chat/chatThunk";
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/store";
 
 const SelectedConversationPage = () => {
   const { id } = useParams();
   const searchParams = useSearchParams();
   const isFirst = searchParams.get("isFirst");
   const [loading, setLoading] = useState(true);
-
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     console.log("is first", isFirst === "true", id);
-    const fetchConversation = async () => {
+    const fetchChat = async () => {
       if (isFirst === "true") {
         dispatch(setConversationId(Number(id)));
-        dispatch(setIsFirstTrue())
+        dispatch(setIsFirstTrue());
         const params = new URLSearchParams(window.location.search);
         params.delete("isFirst");
         const newUrl = `${window.location.pathname}?${params.toString()}`;
@@ -27,44 +28,15 @@ const SelectedConversationPage = () => {
         setLoading(false);
       } else {
         setTimeout(() => {
-          // Simulate fetching conversation
-          console.log("Fetched conversation", id);
-          dispatch(
-            setConversation({
-              id: Number(id),
-              title: `Conversation ${id}`,
-              createdAt: new Date().toISOString(),
-              messages: [
-                {
-                  id: 1,
-                  content: "How can I help you today?",
-                  isUser: false,
-                  createdAt: "",
-                  conversationId: Number(id),
-                },
-                {
-                  id: 2,
-                  content: "I am a user and I am typing a response",
-                  isUser: true,
-                  createdAt: "",
-                  conversationId: Number(id),
-                },
-                {
-                  id: 3,
-                  content: "This is an AI generated response",
-                  isUser: false,
-                  createdAt: "",
-                  conversationId: Number(id),
-                },
-              ],
-            })
-          );
-          setLoading(false);
+          dispatch(fetchConversation(Number(id)))
+            .unwrap()
+            .then(() => setLoading(false))
+            .catch(() => setLoading(false));
         }, 2000);
       }
     };
 
-    fetchConversation();
+    fetchChat();
   }, []);
 
   return (
