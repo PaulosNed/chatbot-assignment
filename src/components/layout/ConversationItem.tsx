@@ -1,3 +1,5 @@
+"use client";
+
 import { Conversation } from "@/types/Conversation";
 import Link from "next/link";
 import React from "react";
@@ -7,6 +9,8 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import { Button } from "@mui/material";
+import { useDeleteConversationMutation } from "@/store/conversation/conversationApi";
+import { useRouter } from "next/navigation";
 
 const style = {
   position: "absolute",
@@ -31,9 +35,13 @@ const ConversationItem = ({ id, title }: Conversation) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleDelete = () => {
+  const [deleteConversation] = useDeleteConversationMutation();
+  const router = useRouter();
+  const handleDelete = async () => {
     // Delete conversation
+    await deleteConversation(id);
     handleClose();
+    router.replace("/");
   };
 
   return (

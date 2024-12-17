@@ -10,16 +10,16 @@ export type ConversationState = {
 const initialState: ConversationState = {
   isFirstText: false,
   conversationResponseBody: {
-    id: "1",
+    id: 0,
     title: "Start New Chat",
-    startTime: new Date().toISOString(),
-    conversation: [
+    createdAt: new Date().toISOString(),
+    messages: [
       {
-        id: "1",
-        text: "How can I help you today?",
+        id: 0,
+        content: "How can I help you today?",
         isUser: false,
         createdAt: "",
-        updatedAt: "",
+        conversationId: 0,
       },
     ],
   },
@@ -33,7 +33,7 @@ const chatSlice = createSlice({
       state,
       action: PayloadAction<GetConversationResponseBody>
     ) => {
-    //   console.log("in set converaation", state, action.payload);
+      //   console.log("in set converaation", state, action.payload);
       state.isFirstText = false;
       state.conversationResponseBody = action.payload;
     },
@@ -45,20 +45,16 @@ const chatSlice = createSlice({
       state.isFirstText = false;
     },
     addMessage: (state, action: PayloadAction<Message>) => {
-    //   console.log("in add message", state, action.payload);
-      state.isFirstText = false;
+      console.log("in add message", state, action.payload);
       state.conversationResponseBody = {
         ...state.conversationResponseBody,
-        conversation: [
-          ...state.conversationResponseBody.conversation,
-          action.payload,
-        ],
+        messages: [...state.conversationResponseBody.messages, action.payload],
       };
     },
     replaceMessage: (state, action: PayloadAction<Message>) => {
-      const lastIndex = state.conversationResponseBody.conversation.length - 1;
+      const lastIndex = state.conversationResponseBody.messages.length - 1;
       if (lastIndex >= 0) {
-        state.conversationResponseBody.conversation[lastIndex] = action.payload;
+        state.conversationResponseBody.messages[lastIndex] = action.payload;
       }
     },
     resetChat: () => initialState,

@@ -1,8 +1,8 @@
 export type Message = {
-    id: string,
-    text: string,
+    id: number,
+    conversationId: number,
+    content: string,
     isUser: boolean,
     createdAt: string,
-    updatedAt: string,
     isTyping?: boolean
 }

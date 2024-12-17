@@ -1,43 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Link from "next/link";
-import { Conversation } from "@/types/Conversation";
 import ConversationItem from "./ConversationItem";
 import Spinner from "@/components/layout/Spinner";
+import { useGetConversationsQuery } from "@/store/conversation/conversationApi";
 
 const ConversationList = () => {
-  const [loading, setLoading] = useState(true);
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-
-  useEffect(() => {
-    const fetchConversations = async () => {
-      // fetch conversations here
-      setTimeout(() => {
-        // Simulate fetching conversation
-        console.log("Fetched conversation");
-        setConversations([
-          {
-            id: "1",
-            title: "Conversation 1",
-          },
-          {
-            id: "2",
-            title: "Conversation 2",
-          },
-          {
-            id: "3",
-            title: "Conversation 3",
-          },
-        ]);
-        setLoading(false);
-      }, 2000);
-    };
-
-    fetchConversations();
-  }, []);
-
+  const { data: conversations, isLoading } = useGetConversationsQuery();
+  
   return (
     <div className="w-full h-full">
       <Link href="/">
@@ -48,14 +20,14 @@ const ConversationList = () => {
           </div>
         </div>
       </Link>
-      {loading && (
+      {isLoading && (
         <div className="h-full md:-mt-10 flex items-center justify-center">
           <Spinner />
         </div>
       )}
-      {!loading && (
+      {!isLoading && (
         <div className="h-full mt-4 md:mt-6 flex flex-col gap-1 md:gap-2">
-          {conversations.map((conversation) => (
+          {conversations?.map((conversation) => (
             <ConversationItem key={conversation.id} {...conversation} />
           ))}
         </div>

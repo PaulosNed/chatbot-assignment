@@ -1,13 +1,13 @@
 import { Message } from "./Message";
 
 export type Conversation = {
-    id: string,
+    id: number,
     title: string,
 }
 
 export type GetConversationResponseBody = {
-    id: string;
+    id: number;
     title: string;
-    startTime: string;
-    conversation: Message[];
+    createdAt: string;
+    messages: Message[];
   };
