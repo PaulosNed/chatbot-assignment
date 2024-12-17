@@ -9,9 +9,9 @@ import { useGetConversationsQuery } from "@/store/conversation/conversationApi";
 
 const ConversationList = () => {
   const { data: conversations, isLoading } = useGetConversationsQuery();
-  
+
   return (
-    <div className="w-full h-full">
+    <div className={`w-full h-full ${isLoading ? "" : "overflow-y-auto"}`}>
       <Link href="/">
         <div className="w-full bg-primaryContainer py-4 text-lg rounded-2xl shadow-lg">
           <div className="flex gap-4 items-center justify-center text-onPrimaryContainer">
@@ -26,7 +26,7 @@ const ConversationList = () => {
         </div>
       )}
       {!isLoading && (
-        <div className="h-full mt-4 md:mt-6 flex flex-col gap-1 md:gap-2">
+        <div className="mt-4 md:mt-6 flex flex-col gap-1 md:gap-2">
           {conversations?.map((conversation) => (
             <ConversationItem key={conversation.id} {...conversation} />
           ))}

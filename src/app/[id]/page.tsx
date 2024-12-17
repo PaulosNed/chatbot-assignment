@@ -1,7 +1,7 @@
 "use client";
 
 import ChatSection from "@/components/conversation/ChatSection";
-import { setConversation } from "@/store/chat/chatSlice";
+import { setConversation, setConversationId, setIsFirstTrue } from "@/store/chat/chatSlice";
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -18,6 +18,8 @@ const SelectedConversationPage = () => {
     console.log("is first", isFirst === "true", id);
     const fetchConversation = async () => {
       if (isFirst === "true") {
+        dispatch(setConversationId(Number(id)));
+        dispatch(setIsFirstTrue())
         const params = new URLSearchParams(window.location.search);
         params.delete("isFirst");
         const newUrl = `${window.location.pathname}?${params.toString()}`;
@@ -29,30 +31,30 @@ const SelectedConversationPage = () => {
           console.log("Fetched conversation", id);
           dispatch(
             setConversation({
-              id: id as string,
+              id: Number(id),
               title: `Conversation ${id}`,
-              startTime: new Date().toISOString(),
-              conversation: [
+              createdAt: new Date().toISOString(),
+              messages: [
                 {
-                  id: "1",
-                  text: "How can I help you today?",
+                  id: 1,
+                  content: "How can I help you today?",
                   isUser: false,
                   createdAt: "",
-                  updatedAt: "",
+                  conversationId: Number(id),
                 },
                 {
-                  id: "2",
-                  text: "I am a user and I am typing a response",
+                  id: 2,
+                  content: "I am a user and I am typing a response",
                   isUser: true,
                   createdAt: "",
-                  updatedAt: "",
+                  conversationId: Number(id),
                 },
                 {
-                  id: "3",
-                  text: "This is an AI generated response",
+                  id: 3,
+                  content: "This is an AI generated response",
                   isUser: false,
                   createdAt: "",
-                  updatedAt: "",
+                  conversationId: Number(id),
                 },
               ],
             })

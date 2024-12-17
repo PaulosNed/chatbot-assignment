@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import ChatbotIcon from "@/icons/ChatbotIcon";
@@ -16,9 +16,11 @@ import {
   ConversationState,
   replaceMessage,
   setIsFirstFalse,
-  setIsFirstTrue,
 } from "@/store/chat/chatSlice";
-import { useCreateConversationMutation } from "@/store/conversation/conversationApi";
+import {
+  useCreateConversationMutation,
+  useCreateMessageMutation,
+} from "@/store/conversation/conversationApi";
 
 interface ChatSectionProps {
   loading: boolean;
@@ -28,17 +30,17 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
   const isFirstText = useSelector(
     (state: { chat: ConversationState }) => state.chat.isFirstText
   );
-  const { startTime, conversation } = useSelector(
+  const { id, createdAt, messages } = useSelector(
     (state: { chat: ConversationState }) => state.chat.conversationResponseBody
   );
 
   const [question, setQuestion] = useState<string>("");
   const router = useRouter();
 
-  const [createConversation, { data}] =
-    useCreateConversationMutation();
+  const [createConversation] = useCreateConversationMutation();
+  const [createMessage] = useCreateMessageMutation();
 
-  const chatTime = new Date(startTime).toLocaleString("en-US", {
+  const chatTime = new Date(createdAt).toLocaleString("en-US", {
     month: "short",
     day: "numeric",
     hour: "numeric",
@@ -53,59 +55,85 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
 
     dispatch(
       addMessage({
-        id: conversation.length.toString(),
-        text: question,
+        id: messages.length,
+        content: question,
         isUser: true,
-        createdAt: startTime,
-        updatedAt: startTime,
+        createdAt: createdAt,
+        conversationId: id,
       })
     );
-    if (conversation.length === 1) {
-      dispatch(setIsFirstTrue());
+    if (messages.length === 1) {
+      // dispatch(setIsFirstTrue());
 
       const res = await createConversation({
-        title: `Conversation ${conversation.length + 1}`,
+        title: `Conversation ${messages.length + 1}`,
       });
 
-      if (res) {
+      if (res?.data?.id) {
         console.log("conversation created", res);
-        const id = (data as any).id;
-        router.replace(`/${id}?isFirst=true`);
+        const convId = res?.data?.id;
+        console.log("number id", Number(convId));
+
+        
+        await createMessage({
+          content: "How Can I help you today?",
+          isUser: false,
+          conversationId: convId,
+        });
+        await createMessage({
+          content: question,
+          isUser: true,
+          conversationId: convId,
+        });
+
+        // dispatch(setConversationId(Number(convId)));
+        router.replace(`/${convId}?isFirst=true`);
       }
     } else {
+      await createMessage({
+        content: question,
+        isUser: true,
+        conversationId: id,
+      });
       getResponse();
     }
 
     setQuestion("");
   };
 
-  const getResponse = () => {
+  const getResponse = async () => {
     // show animation for two seconds
     dispatch(
       addMessage({
-        id: conversation.length.toString(),
-        text: "Typing...",
+        id: messages.length,
+        content: "Typing...",
         isUser: false,
-        createdAt: startTime,
-        updatedAt: startTime,
+        createdAt: createdAt,
+        conversationId: id,
       })
     );
 
     setTimeout(() => {
       dispatch(
         replaceMessage({
-          id: (conversation.length + 1).toString(),
-          text: "This is a response from the chatbot.",
+          id: messages.length + 1,
+          content: "This is a response from the chatbot.",
           isUser: false,
           createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          conversationId: id,
         })
       );
     }, 2000);
+    await createMessage({
+      content: "This is a response from the chatbot.",
+      isUser: false,
+      conversationId: id,
+    });
   };
 
   useEffect(() => {
     if (isFirstText) {
+      console.log("found first text in chatsecction")
       getResponse();
       dispatch(setIsFirstFalse());
     }
@@ -124,7 +152,7 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
             <p className="w-full text-center text-sm">{chatTime}</p>
 
             <div className="mt-4 flex flex-col gap-4 w-full overflow-y-auto">
-              {conversation.map((message: Message, idx: number) => (
+              {messages.map((message: Message, idx: number) => (
                 <div
                   key={idx}
                   className={`flex gap-2 items-center ${
@@ -141,7 +169,7 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
                         : "rounded-bl-none bg-surfaceContainerHigh"
                     }`}
                   >
-                    {message.text}
+                    {message.content}
                   </div>
                 </div>
               ))}

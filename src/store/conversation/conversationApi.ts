@@ -4,7 +4,7 @@ import {
   GetConversationResponseBody,
 } from "@/types/Conversation";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { addMessage, setConversation, setIsFirstTrue } from "../chat/chatSlice";
+import { setConversation } from "../chat/chatSlice";
 import { Message } from "@/types/Message";
 
 const BASE_URL = process.env.NEXT_PUBLIC_ENDPOINT;
@@ -68,6 +68,13 @@ export const conversationApi = createApi({
         method: "POST",
         body: data,
       }),
+      async onQueryStarted(data, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          console.error("Error creating message:", error, data);
+        }
+      },
       // async onQueryStarted(data, { dispatch, queryFulfilled }) {
       //   try {
       //     const { data: response } = await queryFulfilled;

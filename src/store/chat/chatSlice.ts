@@ -29,12 +29,14 @@ const chatSlice = createSlice({
   name: "chat",
   initialState,
   reducers: {
+    setConversationId: (state, action: PayloadAction<number>) => {
+      state.conversationResponseBody.id = action.payload;
+    },
     setConversation: (
       state,
       action: PayloadAction<GetConversationResponseBody>
     ) => {
       //   console.log("in set converaation", state, action.payload);
-      state.isFirstText = false;
       state.conversationResponseBody = action.payload;
     },
     setIsFirstTrue: (state) => {
@@ -45,7 +47,6 @@ const chatSlice = createSlice({
       state.isFirstText = false;
     },
     addMessage: (state, action: PayloadAction<Message>) => {
-      console.log("in add message", state, action.payload);
       state.conversationResponseBody = {
         ...state.conversationResponseBody,
         messages: [...state.conversationResponseBody.messages, action.payload],
@@ -68,6 +69,7 @@ export const {
   setConversation,
   replaceMessage,
   resetChat,
+  setConversationId,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

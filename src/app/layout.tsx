@@ -27,7 +27,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                 <AppBarComponent />
                 <div className="py-10 md:p-10 flex gap-8 h-full">
                   {/* List of Chats */}
-                  <div className="hidden md:block md:w-4/12 h-full">
+                  <div className="hidden md:block md:w-4/12 h-ful">
                     <ConversationList />
                   </div>
                   {/* Selected Chat */}
