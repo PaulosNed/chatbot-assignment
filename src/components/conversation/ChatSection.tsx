@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import ChatbotIcon from "@/icons/ChatbotIcon";
@@ -17,6 +18,7 @@ import {
   setIsFirstFalse,
   setIsFirstTrue,
 } from "@/store/chat/chatSlice";
+import { useCreateConversationMutation } from "@/store/conversation/conversationApi";
 
 interface ChatSectionProps {
   loading: boolean;
@@ -33,6 +35,9 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
   const [question, setQuestion] = useState<string>("");
   const router = useRouter();
 
+  const [createConversation, { data}] =
+    useCreateConversationMutation();
+
   const chatTime = new Date(startTime).toLocaleString("en-US", {
     month: "short",
     day: "numeric",
@@ -43,7 +48,7 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
 
   const dispatch = useDispatch();
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (!question) return;
 
     dispatch(
@@ -55,11 +60,18 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
         updatedAt: startTime,
       })
     );
-    if (conversation.length === 2) {
+    if (conversation.length === 1) {
       dispatch(setIsFirstTrue());
 
-      // Make request to backend to create a conversation then push to the id
-      router.replace(`/${2}`);
+      const res = await createConversation({
+        title: `Conversation ${conversation.length + 1}`,
+      });
+
+      if (res) {
+        console.log("conversation created", res);
+        const id = (data as any).id;
+        router.replace(`/${id}?isFirst=true`);
+      }
     } else {
       getResponse();
     }

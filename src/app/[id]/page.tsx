@@ -2,29 +2,28 @@
 
 import ChatSection from "@/components/conversation/ChatSection";
 import { setConversation } from "@/store/chat/chatSlice";
-import { GetConversationResponseBody } from "@/types/Conversation";
-// import Spinner from "@/components/layout/Spinner";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 const SelectedConversationPage = () => {
   const { id } = useParams();
+  const searchParams = useSearchParams();
+  const isFirst = searchParams.get("isFirst");
   const [loading, setLoading] = useState(true);
 
-  const { isFirstText } = useSelector(
-    (state: {
-      chat: {
-        isFirstText: boolean;
-        conversationResponseBody: GetConversationResponseBody;
-      };
-    }) => state.chat
-  );
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log("is first", isFirst === "true", id);
     const fetchConversation = async () => {
-      if (!isFirstText) {
+      if (isFirst === "true") {
+        const params = new URLSearchParams(window.location.search);
+        params.delete("isFirst");
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.replaceState({}, "", newUrl);
+        setLoading(false);
+      } else {
         setTimeout(() => {
           // Simulate fetching conversation
           console.log("Fetched conversation", id);
@@ -60,8 +59,6 @@ const SelectedConversationPage = () => {
           );
           setLoading(false);
         }, 2000);
-      } else {
-        setLoading(false);
       }
     };
 
