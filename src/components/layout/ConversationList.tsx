@@ -6,9 +6,18 @@ import Link from "next/link";
 import ConversationItem from "./ConversationItem";
 import Spinner from "@/components/layout/Spinner";
 import { useGetConversationsQuery } from "@/store/conversation/conversationApi";
+import ErrorPage from "@/app/ErrorPage";
 
 const ConversationList = () => {
-  const { data: conversations, isLoading } = useGetConversationsQuery();
+  const {
+    data: conversations,
+    isLoading,
+    isError,
+  } = useGetConversationsQuery();
+
+  if (isError) {
+    return <ErrorPage />;
+  }
 
   return (
     <div className={`w-full h-full ${isLoading ? "" : "overflow-y-auto"}`}>

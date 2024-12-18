@@ -22,6 +22,7 @@ import {
   useCreateMessageMutation,
 } from "@/store/conversation/conversationApi";
 import TypingDots from "../layout/TypingDots";
+import ErrorPage from "@/app/ErrorPage";
 
 interface ChatSectionProps {
   loading: boolean;
@@ -40,8 +41,10 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const router = useRouter();
 
-  const [createConversation] = useCreateConversationMutation();
-  const [createMessage] = useCreateMessageMutation();
+  const [createConversation, { isError: isCreateConversationError }] =
+    useCreateConversationMutation();
+  const [createMessage, { isError: isCreateMessageError }] =
+    useCreateMessageMutation();
 
   const chatTime = new Date(createdAt).toLocaleString("en-US", {
     month: "short",
@@ -157,6 +160,10 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
       dispatch(setIsFirstFalse());
     }
   }, [isFirstText]);
+
+  if (isCreateConversationError || isCreateMessageError) {
+    return <ErrorPage />;
+  }
 
   return (
     <div className="h-full relative">

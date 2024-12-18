@@ -7,12 +7,14 @@ import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "@/store";
+import ErrorPage from "../ErrorPage";
 
 const SelectedConversationPage = () => {
   const { id } = useParams();
   const searchParams = useSearchParams();
   const isFirst = searchParams.get("isFirst");
   const [loading, setLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
@@ -31,7 +33,10 @@ const SelectedConversationPage = () => {
           dispatch(fetchConversation(Number(id)))
             .unwrap()
             .then(() => setLoading(false))
-            .catch(() => setLoading(false));
+            .catch(() => {
+              setIsError(true)
+              setLoading(false)
+            });
         }, 2000);
       }
     };
@@ -39,6 +44,9 @@ const SelectedConversationPage = () => {
     fetchChat();
   }, []);
 
+  if (isError) {
+    return <ErrorPage />
+  }
   return (
     <div className="h-full">
       <ChatSection loading={loading} />
