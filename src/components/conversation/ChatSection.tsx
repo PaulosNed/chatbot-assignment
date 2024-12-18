@@ -110,13 +110,6 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
     );
 
     setTimeout(async () => {
-      if (!isFirstText) {
-        await createMessage({
-          content: question,
-          isUser: true,
-          conversationId: id,
-        });
-      }
       dispatch(
         replaceMessage({
           id: messages.length + 1,
@@ -127,6 +120,13 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
         })
       );
     }, 2000);
+    if (!isFirstText) {
+      await createMessage({
+        content: question,
+        isUser: true,
+        conversationId: id,
+      });
+    }
     await createMessage({
       content: "This is a response from the chatbot.",
       isUser: false,
