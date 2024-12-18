@@ -16,7 +16,7 @@ const ConversationList = () => {
   } = useGetConversationsQuery();
 
   if (isError) {
-    return <ErrorPage />;
+    return <ErrorPage showButton={false}/>;
   }
 
   return (
