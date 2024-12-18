@@ -18,8 +18,8 @@ const SelectedConversationPage = () => {
   useEffect(() => {
     console.log("is first", isFirst === "true", id);
     const fetchChat = async () => {
+      dispatch(setConversationId(Number(id)));
       if (isFirst === "true") {
-        dispatch(setConversationId(Number(id)));
         dispatch(setIsFirstTrue());
         const params = new URLSearchParams(window.location.search);
         params.delete("isFirst");

@@ -11,6 +11,8 @@ import Typography from "@mui/material/Typography";
 import { Button } from "@mui/material";
 import { useDeleteConversationMutation } from "@/store/conversation/conversationApi";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { ConversationState } from "@/store/chat/chatSlice";
 
 const style = {
   position: "absolute",
@@ -34,6 +36,7 @@ const ConversationItem = ({ id, title }: Conversation) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const { id: selectedId } = useSelector((state: { chat: ConversationState }) => state.chat.conversationResponseBody);
 
   const [deleteConversation] = useDeleteConversationMutation();
   const router = useRouter();
@@ -47,7 +50,7 @@ const ConversationItem = ({ id, title }: Conversation) => {
   return (
     <>
       <Link href={`/${id}`}>
-        <div className="w-full bg-primaryContainer py-4 text-lg rounded-2xl">
+        <div className={`w-full py-4 text-lg rounded-2xl ${id === selectedId ? "bg-[#d0c7de]" : "bg-primaryContainer"}`}>
           <div className="flex items-center justify-between px-4 pr-6">
             <p className="text-sm md:text-base font-[400]">{title}</p>
             <button

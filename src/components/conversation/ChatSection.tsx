@@ -53,10 +53,13 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
   const handleClick = async () => {
     if (!question) return;
 
+    const questionCopy = question;
+    setQuestion("");
+
     dispatch(
       addMessage({
         id: messages.length,
-        content: question,
+        content: questionCopy,
         isUser: true,
         createdAt: createdAt,
         conversationId: id,
@@ -74,31 +77,22 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
         const convId = res?.data?.id;
         console.log("number id", Number(convId));
 
-        
         await createMessage({
           content: "How Can I help you today?",
           isUser: false,
           conversationId: convId,
         });
         await createMessage({
-          content: question,
+          content: questionCopy,
           isUser: true,
           conversationId: convId,
         });
 
-        // dispatch(setConversationId(Number(convId)));
         router.replace(`/${convId}?isFirst=true`);
       }
     } else {
-      await createMessage({
-        content: question,
-        isUser: true,
-        conversationId: id,
-      });
       getResponse();
     }
-
-    setQuestion("");
   };
 
   const getResponse = async () => {
@@ -113,7 +107,14 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
       })
     );
 
-    setTimeout(() => {
+    setTimeout(async() => {
+      if (!isFirstText) {
+        await createMessage({
+          content: question,
+          isUser: true,
+          conversationId: id,
+        });
+      }
       dispatch(
         replaceMessage({
           id: messages.length + 1,
@@ -133,7 +134,7 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
 
   useEffect(() => {
     if (isFirstText) {
-      console.log("found first text in chatsecction")
+      console.log("found first text in chatsecction");
       getResponse();
       dispatch(setIsFirstFalse());
     }
