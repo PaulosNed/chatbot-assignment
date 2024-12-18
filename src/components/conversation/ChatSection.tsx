@@ -21,6 +21,7 @@ import {
   useCreateConversationMutation,
   useCreateMessageMutation,
 } from "@/store/conversation/conversationApi";
+import TypingDots from "../layout/TypingDots";
 
 interface ChatSectionProps {
   loading: boolean;
@@ -104,10 +105,11 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
         isUser: false,
         createdAt: createdAt,
         conversationId: id,
+        isTyping: true,
       })
     );
 
-    setTimeout(async() => {
+    setTimeout(async () => {
       if (!isFirstText) {
         await createMessage({
           content: question,
@@ -170,7 +172,11 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
                         : "rounded-bl-none bg-surfaceContainerHigh"
                     }`}
                   >
-                    {message.content}
+                    {"isTyping" in message && message.isTyping ? (
+                      <TypingDots />
+                    ) : (
+                      message.content
+                    )}
                   </div>
                 </div>
               ))}
