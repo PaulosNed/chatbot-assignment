@@ -43,12 +43,29 @@ Once the server is running, you can access the project at `http://localhost:3000
 
 ## Project Structure
 
-This project is organized into the following main sections:
+├── .next/                 # Next.js build files (generated)
+├── node_modules/          # Project dependencies
+├── public/                # Public assets such as images and fonts
+├── src/                   # Source files
+│   ├── app/               # Application routing and pages
+│   ├── components/        # Reusable components
+│   ├── icons/             # Icon components
+│   ├── provider/          # Context providers for state or auth management
+│   ├── store/             # Redux or state management setup
+│   ├── types/             # TypeScript type definitions
+├── .env.local             # Environment variables for local development
+├── .env.production        # Environment variables for production
+├── .gitignore             # Files and directories ignored by Git
+├── eslint.config.mjs      # ESLint configuration
+├── next-env.d.ts          # TypeScript definition for Next.js
+├── next.config.ts         # Next.js configuration
+├── package-lock.json      # Locked versions of installed dependencies
+├── package.json           # Project metadata and dependency management
+├── postcss.config.mjs     # PostCSS configuration for processing styles
+├── README.md              # Project documentation
+├── tailwind.config.ts     # Tailwind CSS configuration
+├── tsconfig.json          # TypeScript configuration
 
-- **Components**: The UI components for the chatbot interface, including the chat bubble, message display, and loading spinner (typing animation).
-- **App**: The pages of the chatbot.
-- **Styles**: TailwindCSS and Material UI are used for styling the components, ensuring a responsive and clean UI.
-- **Icons**: Icons from material UI and SVGs from the figma design were used.
 
 ## Reference Documentation
 

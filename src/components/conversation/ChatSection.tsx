@@ -207,7 +207,7 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
           </div>
         )}
       </div>
-      <div className="fixed z-10 bg-surface md:bg-white md:rounded-b-3xl bottom-3 md:absolute md:bottom-5 left-0 w-full">
+      <div className="fixed z-10 bg-surface md:bg-white md:rounded-b-3xl bottom-0 pt-2 pb-3 md:absolute md:bottom-5 left-0 w-full">
         <div className="w-full px-4">
           <div
             className={`flex items-center w-full rounded-full bg-surfaceContainerHigh px-4 py-3 shadow-sm ${
