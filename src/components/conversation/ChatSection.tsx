@@ -36,6 +36,8 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
   );
 
   const [question, setQuestion] = useState<string>("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const router = useRouter();
 
   const [createConversation] = useCreateConversationMutation();
@@ -51,11 +53,24 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
 
   const dispatch = useDispatch();
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuestion(e.target.value);
+    setIsTyping(e.target.value.length > 0 && !isDisabled);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleClick();
+    }
+  };
+
   const handleClick = async () => {
     if (!question) return;
 
     const questionCopy = question;
     setQuestion("");
+    setIsDisabled(true);
+    setIsTyping(false);
 
     dispatch(
       addMessage({
@@ -119,6 +134,7 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
           conversationId: id,
         })
       );
+      setIsDisabled(false);
     }, 2000);
     if (!isFirstText) {
       await createMessage({
@@ -186,18 +202,25 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
       </div>
       <div className="fixed z-10 bg-surface md:bg-white md:rounded-b-3xl bottom-3 md:absolute md:bottom-5 left-0 w-full">
         <div className="w-full px-4">
-          <div className="flex items-center w-full rounded-full bg-surfaceContainerHigh px-4 py-3 shadow-sm">
+          <div
+            className={`flex items-center w-full rounded-full bg-surfaceContainerHigh px-4 py-3 shadow-sm ${
+              isTyping && !isDisabled ? "border-2 border-black" : ""
+            }`}
+          >
             <input
               value={question}
               type="text"
               placeholder="Reply to Chatbot"
-              onChange={(e) => setQuestion(e.target.value)}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
               className="w-full bg-transparent outline-none text-sm tex-ons"
+              disabled={isDisabled}
             />
             <button
               className="ml-2 text-gray-600 hover:text-gray-800"
               onClick={handleClick}
               aria-label="send"
+              disabled={isDisabled}
             >
               <SendIcon />
             </button>
