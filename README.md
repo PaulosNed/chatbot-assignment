@@ -41,8 +41,9 @@ Before running this project, ensure you have Node.js installed on your system.
 
 Once the server is running, you can access the project at `http://localhost:3000/`.
 
-## Project Structure
+### Project Structure
 
+```bash
 ├── .next/                 # Next.js build files (generated)
 ├── node_modules/          # Project dependencies
 ├── public/                # Public assets such as images and fonts
