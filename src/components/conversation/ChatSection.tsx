@@ -220,7 +220,9 @@ const ChatSection = ({ loading }: ChatSectionProps) => {
               placeholder="Reply to Chatbot"
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              className="w-full bg-transparent outline-none text-sm tex-ons"
+              className={`w-full bg-transparent outline-none text-sm tex-ons ${
+                isDisabled ? "opacity-20" : ""
+              }`}
               disabled={isDisabled}
             />
             <button
